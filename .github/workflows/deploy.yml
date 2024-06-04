@@ -4,12 +4,14 @@ env:
     hostname: 20.232.105.87
     username: azureuser
     destination: /var/www/html
+    target_username: root
+    target_group: root
 
 on:
     push:
         branches:
             - main
-    pull_requests:
+    pull_request:
         branches:
             - main
         types:
@@ -31,4 +33,5 @@ on:
                         - run: rsync --archive --verbose --compress --delete -e "ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa" ./ ${{env.username}}@${{env.hostname}}:${{env.destination}}
                           continue-on-error: true
                         - run: ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ${{env.username}}@${{env.hostname}} "sudo chown --recursive ${{env.target_username}}:${{env.target_group}} ${{env.destination}}"
+                        
                         - run: srm ~/.ssh/id_rsa
